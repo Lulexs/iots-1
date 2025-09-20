@@ -5,14 +5,11 @@ from itertools import zip_longest
 
 CSV_FILES = [
     "Water Level Sensor - NeWater Tank.csv",
-    "Energy Sensor - NeWater Pump 1.csv",
-    "Energy Sensor - NeWater Pump 2.csv",
     "Power Sensor - NeWater Pump 1.csv",
     "Power Sensor - NeWater Pump 2.csv",
 ]
 
 WATER_LEVEL_ENDPOINT = "http://localhost:5103/api/v1/WaterTank"
-# ENERGY_ENDPOINT = "http://localhost:5103/api/v1/PumpEnergy"
 POWER_ENDPOINT = "http://localhost:5103/api/v1/Power"
 
 
@@ -46,7 +43,7 @@ def main():
                 print(f"Failed to process water row: {e}")
 
         # Power - Pump 1
-        power_row1 = rows[3]
+        power_row1 = rows[1]
         if power_row1 is not None:
             try:
                 reading_time = power_row1[0].strip().replace(" ", "T")
@@ -69,7 +66,7 @@ def main():
                 print(f"Failed to process power row: {e}")
 
         # Power - Pump 2
-        power_row2 = rows[4]
+        power_row2 = rows[2]
         if power_row2 is not None:
             try:
                 reading_time = power_row2[0].strip().replace(" ", "T")
@@ -91,7 +88,7 @@ def main():
             except Exception as e:
                 print(f"Failed to process power row: {e}")
 
-        time.sleep(1)
+        time.sleep(5)
 
 
 if __name__ == "__main__":

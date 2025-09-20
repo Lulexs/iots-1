@@ -9,11 +9,16 @@ import java.time.ZoneId;
 public class Util {
     public static LocalDateTime toLocalDateTime(Timestamp protoTimestamp) {
         if (protoTimestamp == null) return null;
+        Instant instant = Instant.ofEpochSecond(protoTimestamp.getSeconds(), protoTimestamp.getNanos());
+        return LocalDateTime.ofInstant(instant, ZoneId.of("UTC"));
+    }
 
-        Instant instant = Instant.ofEpochSecond(
-                protoTimestamp.getSeconds(),
-                protoTimestamp.getNanos()
-        );
-        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+    public static Timestamp toProtoTimestamp(LocalDateTime localDateTime) {
+        if (localDateTime == null) return null;
+        Instant instant = localDateTime.atZone(ZoneId.of("UTC")).toInstant();
+        return Timestamp.newBuilder()
+                .setSeconds(instant.getEpochSecond())
+                .setNanos(instant.getNano())
+                .build();
     }
 }

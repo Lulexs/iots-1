@@ -1,10 +1,20 @@
+using Gateway.Protos;
 using Serilog;
 using Serilog.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IWaterTankWaterLevelService, WaterTankWaterLevelService>();
-builder.Services.AddScoped<IPowerService, PowerService>();
+builder.Services.AddScoped<IPowerService, Gateway.Service.Impl.PowerService>();
+
+builder.Services.AddGrpcClient<WaterTankService.WaterTankServiceClient>(o =>
+{
+    o.Address = new Uri("http://localhost:9090");
+});
+builder.Services.AddGrpcClient<Gateway.Protos.PowerService.PowerServiceClient>(o =>
+{
+    o.Address = new Uri("http://localhost:9090");
+});
 
 builder.Logging.ClearProviders();
 Log.Logger = new LoggerConfiguration()
