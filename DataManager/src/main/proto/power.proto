@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package power;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "com.iots.grpc.power";
+option java_outer_classname = "PowerProto";
+
+message PowerReading {
+    string waterTank = 1;
+    string pump = 2;
+    google.protobuf.Timestamp readingTime = 3;
+    double channel1Power = 4;
+    double channel2Power = 5;
+    double channel3Power = 6;
+}
+
+message DeletePowerReadingDto {
+    string waterTank = 1;
+    string pump = 2;
+    google.protobuf.Timestamp readingTime = 3;
+}
+
+message PowerAggregate {
+    double min = 1;
+    double max = 2;
+    double avg = 3;
+    double sum = 4;
+}
+
+service PowerService {
+    rpc RegisterReading(PowerReading) returns (EmptyResponse);
+    rpc UpdateReading(PowerReading) returns (EmptyResponse);
+    rpc DeleteReading(DeletePowerReadingDto) returns (EmptyResponse);
+    rpc GetPowerReadingAtTime(GetPowerReadingRequest) returns (PowerReading);
+    rpc GetPowerReadingsInInterval(GetPowerReadingsIntervalRequest) returns (PowerReadingsResponse);
+    rpc GetPowerReadingAggregatesForTimePeriod(GetPowerReadingsIntervalRequest) returns (PowerAggregate);
+}
+
+message GetPowerReadingRequest {
+    string waterTank = 1;
+    string pump = 2;
+    google.protobuf.Timestamp readingTime = 3;
+}
+
+message GetPowerReadingsIntervalRequest {
+    string waterTank = 1;
+    string pump = 2;
+    google.protobuf.Timestamp startTime = 3;
+    google.protobuf.Timestamp endTime = 4;
+}
+
+message PowerReadingsResponse {
+    repeated PowerReading readings = 1;
+}
+
+message EmptyResponse {}

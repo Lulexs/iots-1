@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package watertank;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "com.iots.grpc.watertank";
+option java_outer_classname = "WaterTankProto";
+
+message WaterTankWaterLevelReading {
+    string waterTankName = 1;
+    google.protobuf.Timestamp readingTime = 2;
+    double waterLevel = 3;
+}
+
+message DeleteWaterTankWaterLevelReadingDto {
+    string waterTank = 1;
+    google.protobuf.Timestamp readingTime = 2;
+}
+
+message WaterTankWaterLevelAggregate {
+    double min = 1;
+    double max = 2;
+    double avg = 3;
+    double sum = 4;
+}
+
+service WaterTankService {
+    rpc RegisterReading(WaterTankWaterLevelReading) returns (EmptyResponse);
+    rpc UpdateReading(WaterTankWaterLevelReading) returns (EmptyResponse);
+    rpc DeleteReading(DeleteWaterTankWaterLevelReadingDto) returns (EmptyResponse);
+    rpc GetWaterTankWaterLevelReadingAtTime(GetReadingRequest) returns (WaterTankWaterLevelReading);
+    rpc GetWaterTankWaterLevelReadingsInInterval(GetReadingsIntervalRequest) returns (WaterTankWaterLevelReadingsResponse);
+    rpc GetWaterTankWaterLevelReadingAggregatesForTimePeriod(GetReadingsIntervalRequest) returns (WaterTankWaterLevelAggregate);
+}
+
+message GetReadingRequest {
+    string waterTank = 1;
+    google.protobuf.Timestamp readingTime = 2;
+}
+
+message GetReadingsIntervalRequest {
+    string waterTank = 1;
+    google.protobuf.Timestamp startTime = 2;
+    google.protobuf.Timestamp endTime = 3;
+}
+
+message WaterTankWaterLevelReadingsResponse {
+    repeated WaterTankWaterLevelReading readings = 1;
+}
+
+message EmptyResponse {}
