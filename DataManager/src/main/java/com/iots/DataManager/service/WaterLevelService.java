@@ -1,12 +1,14 @@
 package com.iots.DataManager.service;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
+import com.iots.DataManager.publisher.MqttPublisher;
 import com.iots.DataManager.repository.WaterLevelRepository;
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.grpc.server.service.GrpcService;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,23 +16,35 @@ import java.util.List;
 public class WaterLevelService extends com.iots.grpc.watertank.WaterTankServiceGrpc.WaterTankServiceImplBase {
 
     private final WaterLevelRepository waterLevelRepository;
+    private final MqttPublisher mqttPublisher;
     private static final Logger LOGGER = LoggerFactory.getLogger(WaterLevelService.class);
 
-    public WaterLevelService(WaterLevelRepository waterLevelRepository) {
+    public WaterLevelService(WaterLevelRepository waterLevelRepository,
+                             MqttPublisher mqttPublisher) {
         this.waterLevelRepository = waterLevelRepository;
+        this.mqttPublisher = mqttPublisher;
     }
 
     @Override
-    @Transactional
     public void registerReading(com.iots.grpc.watertank.WaterTankWaterLevelReading reading, StreamObserver<Empty> responseObserver) {
         LOGGER.info("registerReading received: {}", reading);
-        waterLevelRepository.insertWaterLevelReading(reading);
-        responseObserver.onNext(Empty.newBuilder().build());
-        responseObserver.onCompleted();
+        try {
+            waterLevelRepository.insertWaterLevelReading(reading);
+            responseObserver.onNext(Empty.newBuilder().build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            LOGGER.error("Failed to register reading: {}", reading);
+        }
+
+        try {
+            String serialized = JsonFormat.printer().print(reading);
+            mqttPublisher.publish("dev/cdc", serialized);
+        } catch (InvalidProtocolBufferException e) {
+            LOGGER.error("Failed to write to mqtt topic because of json processing exception", e);
+        }
     }
 
     @Override
-    @Transactional
     public void updateReading(com.iots.grpc.watertank.WaterTankWaterLevelReading reading, StreamObserver<Empty> responseObserver) {
         LOGGER.info("updateReading received: {}", reading);
         waterLevelRepository.updateWaterLevelReading(reading);
@@ -39,7 +53,6 @@ public class WaterLevelService extends com.iots.grpc.watertank.WaterTankServiceG
     }
 
     @Override
-    @Transactional
     public void deleteReading(com.iots.grpc.watertank.DeleteWaterTankWaterLevelReadingDto dto, StreamObserver<Empty> responseObserver) {
         LOGGER.info("deleteReading received: {}", dto);
         waterLevelRepository.deleteWaterLevelReading(dto);
@@ -48,7 +61,6 @@ public class WaterLevelService extends com.iots.grpc.watertank.WaterTankServiceG
     }
 
     @Override
-    @Transactional
     public void getWaterTankWaterLevelReadingAtTime(com.iots.grpc.watertank.GetReadingRequest request,
                                                     StreamObserver<com.iots.grpc.watertank.WaterTankWaterLevelReading> responseObserver) {
         LOGGER.info("getWaterTankWaterLevelReadingAtTime received: {}", request);
@@ -60,7 +72,6 @@ public class WaterLevelService extends com.iots.grpc.watertank.WaterTankServiceG
     }
 
     @Override
-    @Transactional
     public void getWaterTankWaterLevelReadingsInInterval(com.iots.grpc.watertank.GetReadingsIntervalRequest request,
                                                          StreamObserver<com.iots.grpc.watertank.WaterTankWaterLevelReadingsResponse> responseObserver) {
         LOGGER.info("getWaterTankWaterLevelReadingsInInterval received: {}", request);
@@ -73,7 +84,6 @@ public class WaterLevelService extends com.iots.grpc.watertank.WaterTankServiceG
     }
 
     @Override
-    @Transactional
     public void getWaterTankWaterLevelReadingAggregatesForTimePeriod(com.iots.grpc.watertank.GetReadingsIntervalRequest request,
                                                                      StreamObserver<com.iots.grpc.watertank.WaterTankWaterLevelAggregate> responseObserver) {
         LOGGER.info("getWaterTankWaterLevelReadingAggregatesForTimePeriod received: {}", request);
