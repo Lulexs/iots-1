@@ -18,7 +18,7 @@ public class WaterTankWaterLevelService : IWaterTankWaterLevelService
         {
             WaterTankName = reading.WaterTankName,
             WaterLevel = reading.WaterLevel,
-            ReadingTime = Timestamp.FromDateTime(reading.ReadingTime.ToUniversalTime())
+            ReadingTime = Timestamp.FromDateTime(DateTime.SpecifyKind(reading.ReadingTime, DateTimeKind.Utc)),
         });
     }
 
@@ -28,7 +28,7 @@ public class WaterTankWaterLevelService : IWaterTankWaterLevelService
         {
             WaterTankName = reading.WaterTankName,
             WaterLevel = reading.WaterLevel,
-            ReadingTime = Timestamp.FromDateTime(reading.ReadingTime.ToUniversalTime())
+            ReadingTime = Timestamp.FromDateTime(DateTime.SpecifyKind(reading.ReadingTime, DateTimeKind.Utc)),
         });
     }
 
@@ -37,7 +37,7 @@ public class WaterTankWaterLevelService : IWaterTankWaterLevelService
         await _client.DeleteReadingAsync(new Protos.DeleteWaterTankWaterLevelReadingDto
         {
             WaterTank = dto.WaterTank,
-            ReadingTime = Timestamp.FromDateTime(dto.ReadingTime.ToUniversalTime())
+            ReadingTime = Timestamp.FromDateTime(DateTime.SpecifyKind(dto.ReadingTime, DateTimeKind.Utc)),
         });
     }
 
@@ -46,7 +46,7 @@ public class WaterTankWaterLevelService : IWaterTankWaterLevelService
         var response = await _client.GetWaterTankWaterLevelReadingAtTimeAsync(new GetReadingRequest
         {
             WaterTank = waterTank,
-            ReadingTime = Timestamp.FromDateTime(readingTime.ToUniversalTime())
+            ReadingTime = Timestamp.FromDateTime(DateTime.SpecifyKind(readingTime, DateTimeKind.Utc)),
         });
 
         if (response == null) return null;
@@ -66,8 +66,8 @@ public class WaterTankWaterLevelService : IWaterTankWaterLevelService
         var response = await _client.GetWaterTankWaterLevelReadingsInIntervalAsync(new GetReadingsIntervalRequest
         {
             WaterTank = waterTank,
-            StartTime = Timestamp.FromDateTime(startTime.ToUniversalTime()),
-            EndTime = Timestamp.FromDateTime(endTime.ToUniversalTime())
+            StartTime = Timestamp.FromDateTime(DateTime.SpecifyKind(startTime, DateTimeKind.Utc)),
+            EndTime = Timestamp.FromDateTime(DateTime.SpecifyKind(endTime, DateTimeKind.Utc)),
         });
 
         return response.Readings.Select(r => new Model.WaterTankWaterLevelReading(
@@ -86,8 +86,8 @@ public class WaterTankWaterLevelService : IWaterTankWaterLevelService
             new GetReadingsIntervalRequest
             {
                 WaterTank = waterTank,
-                StartTime = Timestamp.FromDateTime(startTime.ToUniversalTime()),
-                EndTime = Timestamp.FromDateTime(endTime.ToUniversalTime())
+                StartTime = Timestamp.FromDateTime(DateTime.SpecifyKind(startTime, DateTimeKind.Utc)),
+                EndTime = Timestamp.FromDateTime(DateTime.SpecifyKind(endTime, DateTimeKind.Utc)),
             });
 
         return new Model.WaterTankWaterLevelAggregate(

@@ -1,0 +1,714 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Gateway | v1",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5103/"
+    }
+  ],
+  "paths": {
+    "/api/v1/Power": {
+      "post": {
+        "tags": [
+          "Power"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PowerReading"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PowerReading"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PowerReading"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Power"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PowerReading"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PowerReading"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PowerReading"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Power"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeletePowerReadingDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeletePowerReadingDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeletePowerReadingDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Power"
+        ],
+        "parameters": [
+          {
+            "name": "waterTank",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pump",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "readingTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PowerReading"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PowerReading"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PowerReading"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Power/in-interval": {
+      "get": {
+        "tags": [
+          "Power"
+        ],
+        "parameters": [
+          {
+            "name": "waterTank",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pump",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PowerReading"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PowerReading"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PowerReading"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Power/agg": {
+      "get": {
+        "tags": [
+          "Power"
+        ],
+        "parameters": [
+          {
+            "name": "waterTank",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pump",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PowerAggregate"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PowerAggregate"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PowerAggregate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "tags": [
+          "Readiness"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/WaterTank": {
+      "post": {
+        "tags": [
+          "WaterTank"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WaterTankWaterLevelReading"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WaterTankWaterLevelReading"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WaterTankWaterLevelReading"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "WaterTank"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WaterTankWaterLevelReading"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WaterTankWaterLevelReading"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WaterTankWaterLevelReading"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "WaterTank"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteWaterTankWaterLevelReadingDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteWaterTankWaterLevelReadingDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteWaterTankWaterLevelReadingDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "WaterTank"
+        ],
+        "parameters": [
+          {
+            "name": "waterTank",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "readingTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterTankWaterLevelReading"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterTankWaterLevelReading"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterTankWaterLevelReading"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/WaterTank/in-interval": {
+      "get": {
+        "tags": [
+          "WaterTank"
+        ],
+        "parameters": [
+          {
+            "name": "waterTank",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WaterTankWaterLevelReading"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WaterTankWaterLevelReading"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WaterTankWaterLevelReading"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/WaterTank/agg": {
+      "get": {
+        "tags": [
+          "WaterTank"
+        ],
+        "parameters": [
+          {
+            "name": "waterTank",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterTankWaterLevelAggregate"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterTankWaterLevelAggregate"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterTankWaterLevelAggregate"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DeletePowerReadingDto": {
+        "required": [
+          "waterTank",
+          "pump",
+          "readingTime"
+        ],
+        "type": "object",
+        "properties": {
+          "waterTank": {
+            "type": "string"
+          },
+          "pump": {
+            "type": "string"
+          },
+          "readingTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DeleteWaterTankWaterLevelReadingDto": {
+        "required": [
+          "waterTank",
+          "readingTime"
+        ],
+        "type": "object",
+        "properties": {
+          "waterTank": {
+            "type": "string"
+          },
+          "readingTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PowerAggregate": {
+        "required": [
+          "min",
+          "max",
+          "avg",
+          "sum"
+        ],
+        "type": "object",
+        "properties": {
+          "min": {
+            "type": "number",
+            "format": "double"
+          },
+          "max": {
+            "type": "number",
+            "format": "double"
+          },
+          "avg": {
+            "type": "number",
+            "format": "double"
+          },
+          "sum": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "PowerReading": {
+        "required": [
+          "waterTank",
+          "pump",
+          "readingTime",
+          "channel1Power",
+          "channel2Power",
+          "channel3Power"
+        ],
+        "type": "object",
+        "properties": {
+          "waterTank": {
+            "type": "string"
+          },
+          "pump": {
+            "type": "string"
+          },
+          "readingTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "channel1Power": {
+            "type": "number",
+            "format": "double"
+          },
+          "channel2Power": {
+            "type": "number",
+            "format": "double"
+          },
+          "channel3Power": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "WaterTankWaterLevelAggregate": {
+        "required": [
+          "min",
+          "max",
+          "avg",
+          "sum"
+        ],
+        "type": "object",
+        "properties": {
+          "min": {
+            "type": "number",
+            "format": "double"
+          },
+          "max": {
+            "type": "number",
+            "format": "double"
+          },
+          "avg": {
+            "type": "number",
+            "format": "double"
+          },
+          "sum": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "WaterTankWaterLevelReading": {
+        "required": [
+          "waterTankName",
+          "readingTime",
+          "waterLevel"
+        ],
+        "type": "object",
+        "properties": {
+          "waterTankName": {
+            "type": "string"
+          },
+          "readingTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "waterLevel": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Power"
+    },
+    {
+      "name": "Readiness"
+    },
+    {
+      "name": "WaterTank"
+    }
+  ]
+}

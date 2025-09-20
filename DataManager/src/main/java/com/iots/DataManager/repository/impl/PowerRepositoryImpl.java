@@ -6,6 +6,7 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.iots.DataManager.jooq.tables.PowerData.POWER_DATA;
@@ -35,13 +36,14 @@ public class PowerRepositoryImpl implements PowerRepository {
     @Override
     @Transactional
     public void updatePowerReading(com.iots.grpc.power.PowerReading powerReading) {
+        LocalDateTime ts = Util.toLocalDateTime(powerReading.getReadingTime());
         dsl.update(POWER_DATA)
                 .set(POWER_DATA.CHANNEL1_POWER, powerReading.getChannel1Power())
                 .set(POWER_DATA.CHANNEL2_POWER, powerReading.getChannel2Power())
                 .set(POWER_DATA.CHANNEL3_POWER, powerReading.getChannel3Power())
                 .where(POWER_DATA.WATER_TANK.eq(powerReading.getWaterTank()))
                 .and(POWER_DATA.PUMP.eq(powerReading.getPump()))
-                .and(POWER_DATA.READING_TIME.eq(Util.toLocalDateTime(powerReading.getReadingTime())))
+                .and(POWER_DATA.READING_TIME.between(ts.minusSeconds(1), ts.plusSeconds(1)))
                 .execute();
     }
 

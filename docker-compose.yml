@@ -1,0 +1,37 @@
+services:
+  postgres-db:
+    image: postgres:latest
+    container_name: datamanager-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+
+  datamanager-service:
+    image: datamanager-service:1.0
+    container_name: datamanager-service
+    depends_on:
+      - postgres-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://datamanager-postgres:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "9090:9090"
+
+  gateway-service:
+    image: gateway-service:1.0
+    container_name: gateway-service
+    depends_on:
+      - datamanager-service
+    environment:
+      SPRINGBOOT_SERVICE_URL: http://datamanager-service:9090
+      ASPNETCORE_URLS: http://+:5103
+    ports:
+      - "5103:5103"
+
+networks:
+  microservice-net:
+    external: true

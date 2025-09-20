@@ -88,7 +88,7 @@ def main():
             except Exception as e:
                 print(f"Failed to process power row: {e}")
 
-        time.sleep(5)
+        time.sleep(2)
 
 
 if __name__ == "__main__":

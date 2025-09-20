@@ -40,6 +40,10 @@
         <appender-ref ref="POWER_FILE"/>
     </logger>
 
+<!--    <logger name="org.jooq.tools.LoggerListener" level="debug">-->
+<!--        <AppenderRef ref="CONSOLE"/>-->
+<!--    </logger>-->
+
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>

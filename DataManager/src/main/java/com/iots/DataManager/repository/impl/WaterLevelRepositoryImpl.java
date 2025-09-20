@@ -6,6 +6,7 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,10 +34,11 @@ public class WaterLevelRepositoryImpl implements WaterLevelRepository {
     @Override
     @Transactional
     public void updateWaterLevelReading(com.iots.grpc.watertank.WaterTankWaterLevelReading reading) {
+        LocalDateTime ts = Util.toLocalDateTime(reading.getReadingTime());
         dsl.update(WATER_LEVEL)
                 .set(WATER_LEVEL.WATER_LEVEL_, reading.getWaterLevel())
                 .where(WATER_LEVEL.WATER_TANK.eq(reading.getWaterTankName()))
-                .and(WATER_LEVEL.READING_TIME.eq(Util.toLocalDateTime(reading.getReadingTime())))
+                .and(WATER_LEVEL.READING_TIME.between(ts.minusSeconds(1), ts.plusSeconds(1)))
                 .execute();
     }
 

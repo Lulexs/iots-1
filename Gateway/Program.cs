@@ -7,13 +7,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IWaterTankWaterLevelService, WaterTankWaterLevelService>();
 builder.Services.AddScoped<IPowerService, Gateway.Service.Impl.PowerService>();
 
+var springBootUrl = Environment.GetEnvironmentVariable("SPRINGBOOT_SERVICE_URL")
+                    ?? "http://localhost:9090";
+
 builder.Services.AddGrpcClient<WaterTankService.WaterTankServiceClient>(o =>
 {
-    o.Address = new Uri("http://localhost:9090");
+    o.Address = new Uri(springBootUrl);
 });
 builder.Services.AddGrpcClient<Gateway.Protos.PowerService.PowerServiceClient>(o =>
 {
-    o.Address = new Uri("http://localhost:9090");
+    o.Address = new Uri(springBootUrl);
 });
 
 builder.Logging.ClearProviders();
