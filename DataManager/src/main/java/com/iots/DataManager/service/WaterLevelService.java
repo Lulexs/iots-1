@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.grpc.server.service.GrpcService;
 
+import java.util.HashSet;
 import java.util.List;
 
 @GrpcService
@@ -37,8 +38,16 @@ public class WaterLevelService extends com.iots.grpc.watertank.WaterTankServiceG
         }
 
         try {
-            String serialized = JsonFormat.printer().print(reading);
-            mqttPublisher.publish("dev/cdc", serialized);
+            String serialized = JsonFormat.printer()
+                    .includingDefaultValueFields(new HashSet<>(reading.getDescriptorForType().getFields()))
+                    .print(reading);
+
+            String withClassName = String.format(
+                    "{\"type\":\"%s\", \"data\":%s}",
+                    reading.getDescriptorForType().getName(),
+                    serialized
+            );
+            mqttPublisher.publish("dev/cdc", withClassName);
         } catch (InvalidProtocolBufferException e) {
             LOGGER.error("Failed to write to mqtt topic because of json processing exception", e);
         }

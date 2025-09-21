@@ -1,5 +1,8 @@
 package com.iots.DataManager.service;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
+import com.iots.DataManager.publisher.MqttPublisher;
 import com.iots.DataManager.repository.PowerRepository;
 import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
@@ -7,25 +10,48 @@ import org.slf4j.LoggerFactory;
 import org.springframework.grpc.server.service.GrpcService;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 
 @GrpcService
 public class PowerService extends com.iots.grpc.power.PowerServiceGrpc.PowerServiceImplBase {
 
     private final PowerRepository repository;
+    private final MqttPublisher mqttPublisher;
     private static final Logger LOGGER = LoggerFactory.getLogger(PowerService.class);
 
-    public PowerService(PowerRepository repository) {
+    public PowerService(PowerRepository repository, MqttPublisher mqttPublisher) {
         this.repository = repository;
+        this.mqttPublisher = mqttPublisher;
     }
 
     @Override
     @Transactional
     public void registerReading(com.iots.grpc.power.PowerReading request, StreamObserver<com.google.protobuf.Empty> responseObserver) {
         LOGGER.info("registerReading received: {}", request);
-        repository.insertPowerReading(request);
-        responseObserver.onNext(com.google.protobuf.Empty.newBuilder().build());
-        responseObserver.onCompleted();
+
+        try {
+            repository.insertPowerReading(request);
+            responseObserver.onNext(com.google.protobuf.Empty.newBuilder().build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            LOGGER.error("Failed to register reading: {}", request);
+        }
+
+        try {
+            String serialized = JsonFormat.printer()
+                    .includingDefaultValueFields(new HashSet<>(request.getDescriptorForType().getFields()))
+                    .print(request);
+
+            String withClassName = String.format(
+                    "{\"type\":\"%s\", \"data\":%s}",
+                    request.getDescriptorForType().getName(),
+                    serialized
+            );
+            mqttPublisher.publish("dev/cdc", withClassName);
+        } catch (InvalidProtocolBufferException e) {
+            LOGGER.error("Failed to write to mqtt topic because of json processing exception", e);
+        }
     }
 
     @Override

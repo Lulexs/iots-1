@@ -15,17 +15,25 @@ public class MqttPublisherImpl implements MqttPublisher {
 
     @Value("${mqtt.broker.url}")
     private String broker;
+
     @Value("${mqtt.client.id}")
     private String clientId;
 
     @PostConstruct
     public void init() {
-        try {
-            client = new MqttClient(broker, clientId, new MemoryPersistence());
-            client.connect();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to connect to MQTT broker", e);
+        int retries = 10;
+        while (retries > 0) {
+            try {
+                System.out.println("Broker, cliendId " + broker + "\\\\\\///" + clientId);
+                client = new MqttClient(broker, clientId, new MemoryPersistence());
+                client.connect();
+                return;
+            } catch (Exception e) {
+                retries--;
+                try { Thread.sleep(5000); } catch (InterruptedException ignored) {}
+            }
         }
+        throw new RuntimeException("Failed to connect to MQTT broker after retries");
     }
 
     public void publish(String topic, String messageContent) {

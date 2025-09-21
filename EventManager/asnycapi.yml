@@ -1,0 +1,115 @@
+asyncapi: 3.0.0
+info:
+  title: IoT-2
+  version: 1.0.0
+defaultContentType: application/json
+
+servers:
+  emqx:
+    host: localhost:1883
+    protocol: mqtt
+
+channels:
+  devCdc:
+    address: dev/cdc
+    messages:
+      cdcEnvelope:
+        $ref: "#/components/messages/CdcEnvelope"
+    servers:
+      - $ref: "#/servers/emqx"
+
+  devUnexpected:
+    address: dev/unexpected
+    messages:
+      cdcEnvelope:
+        $ref: "#/components/messages/CdcEnvelope"
+    servers:
+      - $ref: "#/servers/emqx"
+
+operations:
+  producersSendCdc:
+    action: send
+    channel:
+      $ref: "#/channels/devCdc"
+    messages:
+      - $ref: "#/channels/devCdc/messages/cdcEnvelope"
+
+  eventManagerReceiveCdc:
+    action: receive
+    channel:
+      $ref: "#/channels/devCdc"
+    messages:
+      - $ref: "#/channels/devCdc/messages/cdcEnvelope"
+
+  eventManagerSendUnexpected:
+    action: send
+    channel:
+      $ref: "#/channels/devUnexpected"
+    messages:
+      - $ref: "#/channels/devUnexpected/messages/cdcEnvelope"
+
+  subscribersReceiveUnexpected:
+    action: receive
+    channel:
+      $ref: "#/channels/devUnexpected"
+    messages:
+      - $ref: "#/channels/devUnexpected/messages/cdcEnvelope"
+
+components:
+  messages:
+    CdcEnvelope:
+      name: CdcEnvelope
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/CdcEnvelope"
+
+  schemas:
+    CdcEnvelope:
+      type: object
+      required: [type, data]
+      properties:
+        type:
+          type: string
+          enum: [WaterTankWaterLevelReading, PowerReading]
+        data:
+          oneOf:
+            - $ref: "#/components/schemas/WaterTankWaterLevelReading"
+            - $ref: "#/components/schemas/PowerReading"
+
+    WaterTankWaterLevelReading:
+      type: object
+      properties:
+        waterTank:
+          type: string
+        readingTime:
+          type: string
+          format: date-time
+        waterLevel:
+          type: number
+      required: [waterTank, readingTime, waterLevel]
+
+    PowerReading:
+      type: object
+      properties:
+        waterTank:
+          type: string
+        pump:
+          type: string
+        readingTime:
+          type: string
+          format: date-time
+        channel1Power:
+          type: number
+        channel2Power:
+          type: number
+        channel3Power:
+          type: number
+      required:
+        [
+          waterTank,
+          pump,
+          readingTime,
+          channel1Power,
+          channel2Power,
+          channel3Power,
+        ]
