@@ -14,8 +14,10 @@
     "@mantine/hooks": "^8.3.1",
     "framer-motion": "^12.23.16",
     "mqtt": "^5.14.1",
+    "nats.ws": "^1.30.3",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "recharts": "^3.2.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",

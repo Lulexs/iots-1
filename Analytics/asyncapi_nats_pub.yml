@@ -1,0 +1,37 @@
+asyncapi: 3.0.0
+info:
+  title: Analytics Service
+  version: 1.0.0
+  description: This service is in charge of publishing ml predictions
+servers:
+  nats:
+    host: localhost:4222
+    protocol: nats
+channels:
+  predictions:
+    address: "ml/predictions"
+    messages:
+      NewPrediction:
+        $ref: "#/components/messages/NewPrediction"
+operations:
+  publishPrediction:
+    action: send
+    channel:
+      $ref: "#/channels/predictions"
+    messages:
+      - $ref: "#/channels/predictions/messages/NewPrediction"
+components:
+  messages:
+    NewPrediction:
+      payload:
+        type: object
+        properties:
+          predictedWaterLevel:
+            type: number
+            description: Water level predicted by ml model
+          actualWaterLevel:
+            type: number
+            description: Actual water level reported by sensor
+          timestamp:
+            type: string
+            format: date-time

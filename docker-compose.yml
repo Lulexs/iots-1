@@ -67,6 +67,52 @@ services:
       MQTT_BROKER: emqx-broker
       MQTT_PORT: 1883
 
+  nats:
+    image: nats:latest
+    container_name: nats
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+      - "11080:11080"
+    volumes:
+      - ./nats-ws.conf:/etc/nats/nats.conf:ro
+    command: ["-c", "/etc/nats/nats.conf"]
+
+  mlaas-service:
+    image: mlaas-service:1.0
+    container_name: mlaas-service
+    depends_on:
+      - nats
+    environment:
+      NATS_URL: nats://nats:4222
+    ports:
+      - "5000:5000"
+
+  analytics-service:
+    image: analytics-service:1.0
+    container_name: analytics-service
+    depends_on:
+      emqx-broker:
+        condition: service_healthy
+    environment:
+      MQTT_BROKER: emqx-broker
+      MQTT_PORT: 1883
+      MLAAS_URL: http://mlaas-service:5000/predict
+      NATS_URL: nats://nats:4222
+
+  mqttclient:
+    image: mqttclient:1.0
+    container_name: mqttclient
+    depends_on:
+      emqx-broker:
+        condition: service_healthy
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3000
+    ports:
+      - "5173:5173"
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
 networks:
   microservice-net:
     external: true

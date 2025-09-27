@@ -18,7 +18,17 @@ i dogadjaje sa neocekivanim vrednostima salje na dev/unexpected topic istom EMQX
 Konekcija sa EMQX brokerom ostvaruje se preko tcp-a.
 
 MqttClient je react web aplikacija koja se koriscenjem web soketa povezuje na dev/unexpected
-topic EMQX brokera i prikazuje korisniku neocekivane dogadjaje.
+topic EMQX brokera i prikazuje korisniku neocekivane dogadjaje. Kao zahtev 3. projekta, prosiren je
+da prikazuje predikcije i ocitane vrednosti sa senzora za nivo vode u rezervoaru. On se koriscenjem
+web socketa povezuje na NATS message broker odakle sa ml/predictions topic-a dobija odgovarajuce
+informacije.
 
 DataManager i Gateway takodje loguju sve podatke o zahtevima koji stizu do njih, dok EventManager
 loguje sve poruke koje procita sa dev/cdc topica.
+
+MLAAS je servis koji na osnovu treniranog modela vrsi predikciju nivoa vode u rezervoaru na osnovu
+snage kanala u pumpama. Ovaj servis izlaze rest endpoint /predict kome se pristupa radi predikcije.
+
+Analytics je python servis koji cita podatke sa dev/cdc topic-a emqx brokera i na osnovu procitanih
+podataka salje zahtev mlaas servisu od koga dobija predikciju nivoa vode u rezervoaru. Ovu informaciju
+zajedno sa stvarnim nivoom vode koji je izmerio senzor publikuje na NATS ml/predictions topic.
