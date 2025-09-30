@@ -1,3 +1,10 @@
+O dataset-u:
+Izvor: https://zenodo.org/records/13808085
+
+Dataset sadrzi sirok skup podataka (1.6 gb) o razlicitim parametrima sistema za snabdevanje vodom na univerzitetu. 
+Za projekat iskoriscen je samo deo dataseta - 1 rezervoar vode sa svojim pumpama i podaci o nivou vode u rezervoaru i
+snaga u svakom od tri kanala pumpi rezervoara.
+
 Gateway je dotnet servis koji sluzi za komunikaciju izmedju klijenata/senzora i ostatka sistema.
 Nudi 2 kontrolera - PowerController i WaterTank controller, koji izvrsavaju crud operacije
 nad odgovarajucim podacima koji stizu sa razlicitih senzora i to pet standardnih operacija -
